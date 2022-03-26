@@ -1,7 +1,10 @@
 
+
+
   
 
 with base_times as (
+
   
     
     
@@ -186,6 +189,7 @@ select    time_value,--string of HH:MM:SS
 ) as time_key --number of HHMMSS
 
 from      base_times
-order by  1
+
+
 
 
