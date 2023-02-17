@@ -1,0 +1,43 @@
+name: Release dbt Package
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  TEST_PYTHON_VERSION: 3.8
+  PACKAGE_NAME: dbt
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ env.TEST_PYTHON_VERSION }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.TEST_PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel twine
+          python -m pip install -r requirements.txt
+
+      - name: Bump Version
+        uses: anothrNick/github-tag-action@master
+        with:
+          version: patch
+
+      - name: Build package
+        run: python setup.py sdist bdist_wheel
+
+      # - name: Publish to hub.getdbt.com
+      #   uses: balena/push-to-registry-action@v3.4.0
+      #   with:
+      #     username: ${{ secrets.DBT_HUB_USERNAME }}
+      #     password: ${{ secrets.DBT_HUB_PASSWORD }}
+      #     registry: "hub.getdbt.com"
+      #     image: "${{ env.PACKAGE_NAME }}:${{ env.VERSION }}"
